@@ -57,12 +57,15 @@ public class ProductService {
     }
 
     public Product updateProduct(Long id, UpdateProductDTO product) {
+        if (product.name() == "" || product.name().isBlank()) {
+            throw new InvalidFields("O Nome do produto está inválido");
+        }
         Optional<Product> findById = productRepository.findById(id);
         if (findById.isEmpty()) {
             throw new ResourceNotFoundException("Produto Inexistente");
         }
         Product productNew = findById.get();
-        productNew.setName(product.getName());
+        productNew.setName(product.name());
         Product updatedProduct = productRepository.save(productNew);
         return updatedProduct;
     }
