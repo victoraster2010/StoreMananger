@@ -26,6 +26,11 @@ public class ProductService {
         return productRepository.findAll();
     }
 
+    /**
+     * GetProductBy Id retorna um producto para o controller.
+     * @param id identificador único.
+     * @return um Product Long id e String Name.
+     */
     public Product getProductById(Long id) {
         Optional<Product> findById = productRepository.findById(id);
         if (findById.isPresent()) {

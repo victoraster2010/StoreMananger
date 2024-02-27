@@ -5,6 +5,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.GenerationType;
 
+/**
+ * Entidade do Banco Product.
+ * possui Long id.
+ * possui String name.
+ */
 @Entity
 public class Product {
     @Id
