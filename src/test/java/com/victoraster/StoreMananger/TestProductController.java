@@ -1,6 +1,7 @@
 package com.victoraster.StoreMananger;
 
 import static org.mockito.ArgumentMatchers.matches;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.victoraster.StoreMananger.controllers.ProductController;
+import com.victoraster.StoreMananger.exceptions.InvalidFields;
 import com.victoraster.StoreMananger.exceptions.ResourceNotFoundException;
 import com.victoraster.StoreMananger.services.ProductService;
 import com.victoraster.StoreMananger.models.Product;
@@ -84,13 +86,28 @@ public class TestProductController {
     @Test
     public void getProdById_Error_ResourceNotFound() throws Exception {
         String errorMessage = "Produto não encontrado";
-        when(productService.getProductById(2L)).thenThrow(new ResourceNotFoundException(errorMessage));;
+        when(productService.getProductById(2L)).thenThrow(new ResourceNotFoundException(errorMessage));
+        ;
 
         mockMvc.perform(MockMvcRequestBuilders.get("/products/2")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.error", Matchers.is("Object Not Found"))) 
+                .andExpect(MockMvcResultMatchers.jsonPath("$.error", Matchers.is("Object Not Found")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.is("Produto não encontrado"))); // Top-level
                                                                                                                 // field
+    }
+
+    @Test
+    public void createProduct_Error_InvalidFields() throws Exception {
+        String requestBody = "{\"name\": \"\"}"; // Provide a valid JSON with an empty name
+    
+        doThrow(new InvalidFields("Nome do produto vazio ou inválido")).when(productService).createProduct("");
+    
+        mockMvc.perform(MockMvcRequestBuilders.post("/products")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.error", Matchers.is("Invalid fields")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.is("Nome do produto vazio ou inválido")));
     }
 }
