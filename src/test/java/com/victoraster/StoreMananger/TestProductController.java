@@ -110,4 +110,5 @@ public class TestProductController {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.error", Matchers.is("Invalid fields")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.is("Nome do produto vazio ou inválido")));
     }
+
 }
